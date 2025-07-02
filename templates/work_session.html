@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-center mb-4">ניהול שעות עבודה</h2>
+
+<div class="d-flex flex-column align-items-center">
+  <form method="POST" action="/work" class="mb-3 w-50">
+    <button type="submit" name="action" value="start" class="btn btn-success btn-lg w-100">התחלת עבודה</button>
+  </form>
+  <form method="POST" action="/work" class="w-50">
+    <button type="submit" name="action" value="end" class="btn btn-danger btn-lg w-100">סיום עבודה</button>
+  </form>
+
+  {% if message %}
+    <p class="text-center mt-3 text-info">{{ message }}</p>
+  {% endif %}
+</div>
+{% endblock %}

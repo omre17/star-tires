@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}עובד מערכת{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='worker.css') }}">
+
+<h1 class="text-center my-4">שלום עובד {{ session['username'] }}!</h1>
+
+<div class="d-flex flex-column align-items-center">
+    <!-- כפתור לצפייה בדוח האישי -->
+    <form action="/worker_report" method="get" class="mb-3 w-50">
+        <button type="submit" class="btn btn-primary w-100">צפייה בדוח האישי שלי</button>
+    </form>
+
+    <!-- כפתור לדף חדש של התחלה/סיום עבודה -->
+    <a href="/work-session" class="btn btn-secondary w-50">ניהול שעות עבודה</a>
+</div>
+
+{% if message %}
+  <p class="text-center mt-3 text-info">{{ message }}</p>
+{% endif %}
+
+{% endblock %}

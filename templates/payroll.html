@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}שכר עובדים{% endblock %}
+{% block content %}
+
+<h1 class="text-center my-4">דו"ח שכר</h1>
+
+<table class="table table-bordered table-hover text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>שם משתמש</th>
+            <th>שעות</th>
+            <th>שכר לשעה</th>
+            <th>שכר כולל</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for username, hours, rate, total_pay in payroll %}
+        <tr>
+            <td>{{ username }}</td>
+            <td>{{ hours }}</td>
+            <td>{{ rate }} ₪</td>
+            <td>{{ total_pay }} ₪</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

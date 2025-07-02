@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}מסך ניהול{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body text-center">
+      <h2 class="mb-4">שלום {{ session['username'] }}!</h2>
+
+      <div class="d-grid gap-3 col-6 mx-auto">
+        
+
+        <div class="d-grid gap-3 col-6 mx-auto">
+    <form action="/inventory" method="get" class="mb-3">
+        <button type="submit" class="btn btn-primary btn-lg w-100">ניהול מלאי</button>
+    </form>
+
+    <a href="/payroll" class="btn btn-secondary btn-lg w-100">
+         דוח שכר
+    </a>
+</div>
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+          

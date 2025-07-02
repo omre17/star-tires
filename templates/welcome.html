@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}ברוך הבא{% endblock %}
+{% block content %}
+
+<div class="container mt-5 text-center">
+    <h1 class="mb-4">!ברוך הבא</h1>
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{ error }}
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

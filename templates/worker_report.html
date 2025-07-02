@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}הדוח האישי שלי{% endblock %}
+{% block content %}
+
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+      <h2 class="text-center mb-4">הדוח האישי שלי</h2>
+
+      <ul class="list-group mb-4">
+        <li class="list-group-item">סה"כ שעות עבודה: {{ total_hours }}</li>
+        <li class="list-group-item">שכר לשעה: {{ hourly_rate }} ₪</li>
+        <li class="list-group-item">שכר כולל: {{ total_pay }} ₪</li>
+      </ul>
+
+      <h4 class="mb-3">רשימת כניסות ויציאות</h4>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+          <thead class="table-light">
+            <tr>
+              <th>פעולה</th>
+              <th>תאריך ושעה</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for action, timestamp in sessions %}
+            <tr>
+              <td>{{ action }}</td>
+              <td>{{ timestamp }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

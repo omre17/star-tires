@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}ניהול מלאי{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">ניהול מלאי צמיגים</h1>
+
+    <h2 class="mb-3">הוספת צמיג חדש</h2>
+    <form method="POST" class="mb-4">
+        <div class="mb-3">
+            <input type="text" name="tire_type" class="form-control" placeholder="סוג צמיג">
+        </div>
+        <div class="mb-3">
+            <input type="number" name="quantity" class="form-control" placeholder="כמות">
+        </div>
+        <button type="submit" class="btn btn-success">הוסף</button>
+    </form>
+
+    {% if message %}
+    <div class="alert alert-info text-center">{{ message }}</div>
+    {% endif %}
+
+    <h2 class="mt-4">מלאי נוכחי</h2>
+    <table class="table table-bordered text-center">
+        <thead class="table-light">
+            <tr>
+                <th>סוג צמיג</th>
+                <th>כמות</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in inventory %}
+            <tr>
+                <td>{{ item[0] }}</td>
+                <td>{{ item[1] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
