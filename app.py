@@ -6,6 +6,47 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
+# --- DB helpers for AI context ---
+import sqlite3  # אם כבר קיים – אל תוסיף שוב
+
+def get_inventory_snapshot(db_path="database.db", limit=200):
+    """מחזיר טקסט קצר עם מצב מלאי אמיתי מהטבלה inventory."""
+    try:
+        with sqlite3.connect(db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute(
+                "SELECT tire_type, quantity FROM inventory ORDER BY tire_type LIMIT ?",
+                (limit,)
+            ).fetchall()
+        if not rows:
+            return "אין נתוני מלאי."
+        lines = [f"- {r['tire_type']}: {r['quantity']}" for r in rows]
+        return "מלאי נוכחי:\n" + "\n".join(lines)
+    except Exception:
+        return "שגיאה בשליפת מלאי."
+
+def get_user_hours_this_week(username, db_path="database.db"):
+    """
+    מחזיר תקציר על רשומות השעות מהטבלה work_sessions עבור המשתמש.
+    (בשלב ראשון: תקציר פשוט. נחשב שעות באמת בשדרוג הבא.)
+    """
+    if not username:
+        return "משתמש לא מזוהה."
+    try:
+        with sqlite3.connect(db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute("""
+                SELECT action, timestamp
+                FROM work_sessions
+                WHERE username = ?
+                ORDER BY timestamp
+            """, (username,)).fetchall()
+        if not rows:
+            return f"לא נמצאו רשומות שעות עבור {username}."
+        return f"רשומות שעות עבור {username}: {len(rows)} אירועים (start/end)."
+    except Exception:
+        return "שגיאה בשליפת שעות."
+
 def get_user(username, password):
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
@@ -226,6 +267,67 @@ def work_session():
     return render_template("work_session.html")
 
 import os
+
+# --- AI Helper (Ollama) ---
+import requests
+from flask import render_template, request, redirect, session
+
+@app.route("/ai-helper", methods=["GET", "POST"])
+def ai_helper():
+    # שמירה על ההרשאות הקיימות – חייבים להיות מחוברים
+    if "username" not in session:
+        return redirect("/")
+
+    answer, error = None, None
+    if request.method == "POST":
+        question = (request.form.get("question") or "").strip()
+        if not question:
+            error = "כתוב שאלה לפני שליחה."
+        else:
+            try:
+                # --- שליפת מידע מהדאטאבייס ---
+                inventory_context = get_inventory_snapshot()
+                user_hours_context = get_user_hours_this_week(session.get("username"))
+
+                # --- הוראות למודל ---
+                system_prompt = f"""
+                אתה עוזר לארגון פנצ'רייה.
+                הנה מצב המלאי האמיתי:
+                {inventory_context}
+
+                והנה מידע על שעות עבודה:
+                {user_hours_context}
+
+                ענה בעברית קצר וברור לפי הנתונים האמיתיים למטה.
+                """
+
+                # --- בקשה ל-Ollama ---
+                resp = requests.post(
+                    "http://localhost:11434/api/chat",
+                    json={
+                        "model": "llama3",
+                        "messages": [
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": question}
+                        ],
+                        "stream": False,
+                    },
+                    timeout=30
+                )
+
+                resp.raise_for_status()
+                data = resp.json()
+                answer = (data.get("message") or {}).get("content", "").strip() or "לא התקבלה תשובה."
+            except Exception as e:
+                 error = f"שגיאה בתקשורת עם Ollama: {e}"
+        
+    
+
+
+        
+
+    return render_template("ai_helper.html", answer=answer, error=error)
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

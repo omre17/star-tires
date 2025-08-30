@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}עוזר AI{% endblock %}
+
+{% block content %}
+<div class="container mt-5" dir="rtl">
+  <h2 class="mb-4 text-center">שאל את עוזר ה-AI</h2>
+
+  <form method="POST" class="border p-3 rounded bg-light">
+    <div class="mb-3">
+      <label class="form-label">שאלה</label>
+      <input name="question" class="form-control"
+             placeholder="לדוגמה: כמה שעות עבדתי השבוע? או כמה צמיגים יש מ-205/55R16?">
+    </div>
+    <button type="submit" class="btn btn-primary w-100">שלח</button>
+  </form>
+
+  {% if error %}
+    <div class="alert alert-danger mt-3">{{ error }}</div>
+  {% endif %}
+  {% if answer %}
+    <div class="alert alert-info mt-3" style="white-space: pre-wrap;">{{ answer }}</div>
+  {% endif %}
+</div>
+{% endblock %}
