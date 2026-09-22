@@ -1,18 +1,23 @@
 {% extends "base.html" %}
-
+{% block title %}דיווח נוכחות | צמיגי הכוכב{% endblock %}
+{% block page_title %}דיווח נוכחות{% endblock %}
 {% block content %}
-<h2 class="text-center mb-4">ניהול שעות עבודה</h2>
-
-<div class="d-flex flex-column align-items-center">
-  <form method="POST" action="/work" class="mb-3 w-50">
-    <button type="submit" name="action" value="start" class="btn btn-success btn-lg w-100">התחלת עבודה</button>
-  </form>
-  <form method="POST" action="/work" class="w-50">
-    <button type="submit" name="action" value="end" class="btn btn-danger btn-lg w-100">סיום עבודה</button>
-  </form>
-
-  {% if message %}
-    <p class="text-center mt-3 text-info">{{ message }}</p>
-  {% endif %}
-</div>
+<div class="section-intro"><div><p class="eyebrow">שעון נוכחות</p><h2>ניהול המשמרת</h2><p>המערכת מונעת דיווח כניסה או יציאה כפול ושומרת כל פעולה במסד הנתונים.</p></div></div>
+<section class="attendance-grid single">
+  <article class="panel clock-card">
+    <span class="live-label"><span class="status-dot"></span>מצב נוכחי</span>
+    <strong>{{ 'בעבודה' if working else 'לא בעבודה' }}</strong>
+    <p>{{ 'המשמרת פתוחה עד לדיווח יציאה.' if working else 'אפשר להתחיל משמרת חדשה.' }}</p>
+    <form method="post" action="{{ url_for('work') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="clock-button {{ 'clocked-in' if working else '' }}" name="action" value="{{ 'end' if working else 'start' }}">{{ 'סיום עבודה' if working else 'התחלת עבודה' }}</button>
+    </form>
+  </article>
+  <article class="panel attendance-help">
+    <p class="eyebrow">איך זה עובד</p><h3>דיווח אמין ומוגן</h3>
+    <ul><li>כל פעולה נרשמת עם חותמת זמן.</li><li>רק החשבון שלך יכול לדווח עבורך.</li><li>משמרת נכללת בשכר רק לאחר דיווח יציאה.</li><li>רענון העמוד לא משכפל את הפעולה.</li></ul>
+    <a class="secondary-button" href="{{ url_for('worker_report') }}">צפייה בדוח האישי</a>
+  </article>
+</section>
 {% endblock %}
+

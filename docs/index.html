@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="דמו אינטראקטיבי למערכת ניהול מלאי, נוכחות ושכר של צמיגי הכוכב">
+  <meta name="theme-color" content="#111827">
+  <title>צמיגי הכוכב | מערכת ניהול — דמו</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23111827'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%23f59e0b' stroke-width='8'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23f59e0b'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="demo-strip" role="note">
+    <span class="status-dot" aria-hidden="true"></span>
+    דמו אינטראקטיבי לתיק עבודות · כל הנתונים פיקטיביים ונשמרים בדפדפן בלבד
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span><strong>צמיגי הכוכב</strong><small>מערכת תפעול</small></span>
+      </div>
+
+      <nav class="nav-list" aria-label="ניווט ראשי">
+        <button class="nav-item active" data-view="dashboard"><span aria-hidden="true">⌂</span>סקירה כללית</button>
+        <button class="nav-item manager-only" data-view="inventory"><span aria-hidden="true">▦</span>ניהול מלאי</button>
+        <button class="nav-item worker-only" data-view="attendance"><span aria-hidden="true">◷</span>דיווח נוכחות</button>
+        <button class="nav-item" data-view="reports"><span aria-hidden="true">▤</span><span class="role-report-label">דוח שכר</span></button>
+        <button class="nav-item" data-view="assistant"><span aria-hidden="true">✦</span>עוזר AI</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="profile-mini">
+          <span class="avatar" id="avatar">מ</span>
+          <span><strong id="profileName">מנהל דמו</strong><small id="profileRole">הרשאת מנהל</small></span>
+        </div>
+        <button class="ghost-button" id="resetButton">איפוס נתוני הדמו</button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="פתיחת תפריט" aria-expanded="false">☰</button>
+        <div>
+          <p class="eyebrow">יום שלישי, 22 בספטמבר</p>
+          <h1 id="pageTitle">סקירה כללית</h1>
+        </div>
+        <label class="role-switcher">
+          <span>צפייה בתור</span>
+          <select id="roleSelect" aria-label="בחירת תפקיד בדמו">
+            <option value="manager">מנהל</option>
+            <option value="worker">עובד</option>
+          </select>
+        </label>
+      </header>
+
+      <main id="mainContent">
+        <section class="view active" data-view-panel="dashboard">
+          <div class="welcome-row">
+            <div>
+              <p class="eyebrow">תמונת מצב עדכנית</p>
+              <h2 id="welcomeTitle">בוקר טוב, מנהל הדמו</h2>
+              <p id="welcomeCopy">המלאי, הנוכחות ואומדן השכר מרוכזים במקום אחד.</p>
+            </div>
+            <button class="primary-button manager-only" data-go="inventory">עדכון מלאי <span aria-hidden="true">←</span></button>
+            <button class="primary-button worker-only" data-go="attendance">דיווח נוכחות <span aria-hidden="true">←</span></button>
+          </div>
+
+          <div class="kpi-grid manager-dashboard">
+            <article class="kpi-card accent"><span class="kpi-label">יחידות במלאי</span><strong id="totalStock">—</strong><small>בכל מידות הצמיגים</small></article>
+            <article class="kpi-card"><span class="kpi-label">מידות פעילות</span><strong id="activeSizes">—</strong><small>פריטי מלאי שונים</small></article>
+            <article class="kpi-card warning"><span class="kpi-label">מלאי נמוך</span><strong id="lowStock">—</strong><small>פחות מ־10 יחידות</small></article>
+            <article class="kpi-card"><span class="kpi-label">שעות החודש</span><strong>168.5</strong><small>עובדי הדמו יחד</small></article>
+          </div>
+
+          <div class="kpi-grid worker-dashboard">
+            <article class="kpi-card accent"><span class="kpi-label">שעות השבוע</span><strong id="workerHours">8.0</strong><small>משמרות שהושלמו</small></article>
+            <article class="kpi-card"><span class="kpi-label">אומדן שכר</span><strong id="workerPay">₪400</strong><small>לפי ₪50 לשעה</small></article>
+            <article class="kpi-card"><span class="kpi-label">מצב נוכחי</span><strong id="workerStatus">לא בעבודה</strong><small id="workerStatusNote">אפשר להתחיל משמרת</small></article>
+          </div>
+
+          <div class="dashboard-grid manager-dashboard">
+            <article class="panel">
+              <div class="panel-heading"><div><span class="eyebrow">מלאי</span><h3>מידות מובילות</h3></div><button class="text-button" data-go="inventory">לכל המלאי</button></div>
+              <div id="stockBars" class="stock-bars"></div>
+            </article>
+            <article class="panel">
+              <div class="panel-heading"><div><span class="eyebrow">פעילות</span><h3>עדכונים אחרונים</h3></div></div>
+              <ol class="activity-list" id="activityList"></ol>
+            </article>
+          </div>
+
+          <div class="dashboard-grid worker-dashboard">
+            <article class="panel shift-panel">
+              <div><span class="eyebrow">נוכחות</span><h3>המשמרת שלך</h3><p id="shiftDescription">אין כרגע משמרת פתוחה.</p></div>
+              <button class="clock-button" id="dashboardClockButton">התחלת עבודה</button>
+            </article>
+            <article class="panel">
+              <div class="panel-heading"><div><span class="eyebrow">השבוע</span><h3>המשמרת האחרונה</h3></div></div>
+              <div class="last-shift"><strong>08:00 שעות</strong><span>08:00–16:00 · יום שני</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="inventory">
+          <div class="section-intro"><div><p class="eyebrow">מלאי צמיגים</p><h2>כל המידות במקום אחד</h2><p>חיפוש מהיר ועדכון כמויות עם משוב מיידי.</p></div></div>
+          <div class="inventory-layout">
+            <article class="panel form-panel">
+              <span class="eyebrow">קליטת סחורה</span><h3>הוספת כמות למלאי</h3>
+              <form id="stockForm">
+                <label>מידת צמיג<input id="tireSize" name="size" placeholder="לדוגמה: 195/65R15" maxlength="24" required></label>
+                <label>כמות להוספה<input id="tireQuantity" name="quantity" type="number" min="1" max="1000" value="4" required></label>
+                <button class="primary-button" type="submit">הוספה למלאי</button>
+              </form>
+            </article>
+            <article class="panel table-panel">
+              <div class="panel-heading"><div><span class="eyebrow">מצב נוכחי</span><h3>רשימת מלאי</h3></div><input class="search-input" id="inventorySearch" type="search" placeholder="חיפוש מידה…" aria-label="חיפוש במלאי"></div>
+              <div class="table-wrap"><table><thead><tr><th>מידת צמיג</th><th>כמות</th><th>מצב</th><th>עודכן</th></tr></thead><tbody id="inventoryTable"></tbody></table></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="attendance">
+          <div class="section-intro"><div><p class="eyebrow">נוכחות</p><h2>ניהול שעות עבודה</h2><p>דיווח כניסה ויציאה עם מניעת פעולה כפולה.</p></div></div>
+          <div class="attendance-grid">
+            <article class="panel clock-card"><span class="live-label"><span class="status-dot"></span>מצב נוכחי</span><strong id="attendanceState">לא בעבודה</strong><span id="attendanceTime">אפשר להתחיל משמרת חדשה</span><button class="clock-button" id="attendanceClockButton">התחלת עבודה</button></article>
+            <article class="panel"><div class="panel-heading"><div><span class="eyebrow">היסטוריה</span><h3>דיווחים אחרונים</h3></div></div><div class="table-wrap"><table><thead><tr><th>פעולה</th><th>יום</th><th>שעה</th></tr></thead><tbody id="attendanceTable"></tbody></table></div></article>
+          </div>
+        </section>
+
+        <section class="view" data-view-panel="reports">
+          <div class="section-intro"><div><p class="eyebrow">דוחות</p><h2 id="reportsTitle">אומדן שכר</h2><p>חישוב בסיסי לפי משמרות שהושלמו והתעריף הנוכחי.</p></div><span class="report-badge">נתוני דמו</span></div>
+          <article class="panel table-panel manager-report"><div class="table-wrap"><table><thead><tr><th>עובד</th><th>שעות</th><th>תעריף</th><th>אומדן שכר</th><th>סטטוס</th></tr></thead><tbody><tr><td><span class="employee-cell"><span class="avatar small">ע</span><strong>עובד דמו</strong></span></td><td>168.5</td><td>₪50</td><td><strong>₪8,425</strong></td><td><span class="pill success">מעודכן</span></td></tr><tr><td><span class="employee-cell"><span class="avatar small alt">א</span><strong>אחמד דמו</strong></span></td><td>154.0</td><td>₪52</td><td><strong>₪8,008</strong></td><td><span class="pill success">מעודכן</span></td></tr></tbody></table></div></article>
+          <div class="worker-report report-summary"><article class="kpi-card accent"><span class="kpi-label">סה״כ שעות</span><strong>168.5</strong><small>מתחילת החודש</small></article><article class="kpi-card"><span class="kpi-label">תעריף לשעה</span><strong>₪50</strong><small>תעריף נוכחי</small></article><article class="kpi-card"><span class="kpi-label">אומדן שכר</span><strong>₪8,425</strong><small>לפני מסים וזכויות</small></article></div>
+          <p class="fine-print">הסכומים מיועדים להדגמה בלבד ואינם מהווים תלוש שכר. המערכת המקורית מחשבת רק משמרות שהושלמו.</p>
+        </section>
+
+        <section class="view" data-view-panel="assistant">
+          <div class="section-intro"><div><p class="eyebrow">עוזר תפעולי</p><h2>עוזר AI מבוסס נתוני מערכת</h2><p>בדמו זה התשובות מודגמות מקומית. בגרסת Flask קיימת אינטגרציית Ollama אופציונלית.</p></div></div>
+          <article class="assistant-shell panel">
+            <div class="chat-log" id="chatLog"><div class="message assistant"><span class="ai-mark">✦</span><div><strong>עוזר הכוכב</strong><p>שלום! אפשר לשאול אותי על שעות עבודה<span class="manager-only-inline"> או על מצב המלאי</span>.</p></div></div></div>
+            <div class="suggestions" id="suggestions"><button data-question="אילו מידות נמצאות במלאי נמוך?" class="manager-only-inline">מה חסר במלאי?</button><button data-question="כמה שעות עבדתי השבוע?">כמה שעות עבדתי?</button></div>
+            <form class="chat-form" id="chatForm"><input id="chatInput" maxlength="240" required placeholder="כתבו שאלה על נתוני הדמו…" aria-label="שאלה לעוזר"><button type="submit" aria-label="שליחת שאלה">שליחה</button></form>
+          </article>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,30 +1,61 @@
-<!DOCTYPE html>
-<html lang="he">
+<!doctype html>
+<html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="מערכת ניהול מלאי, נוכחות ושכר לצמיגי הכוכב">
   <title>{% block title %}צמיגי הכוכב{% endblock %}</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background-color: #f8f9fa; /* אפור בהיר ונעים */
-      font-family: Arial, sans-serif;
-    }
-
-    .content-wrapper {
-      max-width: 700px;
-      margin: 50px auto;
-      padding: 20px;
-    }
-
-    h1, h2 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-  </style>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23111827'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%23f59e0b' stroke-width='8'/%3E%3Ccircle cx='32' cy='32' r='6' fill='%23f59e0b'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
 </head>
-<body>
-  <div class="content-wrapper">
-    {% block content %}{% endblock %}
-  </div>
+<body class="{{ 'app-body' if g.user else 'login-body' }}">
+  {% if g.user %}
+    {% if config.DEMO_MODE %}
+      <div class="demo-strip"><span class="status-dot"></span>סביבת הדגמה בלבד · הנתונים פיקטיביים ומשותפים למבקרים</div>
+    {% endif %}
+    <div class="app-shell {{ 'with-demo-strip' if config.DEMO_MODE else '' }}">
+      <aside class="sidebar">
+        <a class="brand" href="{{ url_for('welcome') }}">
+          <span class="brand-mark" aria-hidden="true"><span></span></span>
+          <span><strong>צמיגי הכוכב</strong><small>מערכת תפעול</small></span>
+        </a>
+        <nav class="nav-list" aria-label="ניווט ראשי">
+          <a class="nav-item {{ 'active' if request.endpoint == 'welcome' else '' }}" href="{{ url_for('welcome') }}"><span>⌂</span>סקירה כללית</a>
+          {% if g.user['role'] == 'manager' %}
+            <a class="nav-item {{ 'active' if request.endpoint == 'inventory' else '' }}" href="{{ url_for('inventory') }}"><span>▦</span>ניהול מלאי</a>
+            <a class="nav-item {{ 'active' if request.endpoint == 'payroll_view' else '' }}" href="{{ url_for('payroll_view') }}"><span>▤</span>דוח שכר</a>
+          {% else %}
+            <a class="nav-item {{ 'active' if request.endpoint in ('work_session','work') else '' }}" href="{{ url_for('work_session') }}"><span>◷</span>דיווח נוכחות</a>
+            <a class="nav-item {{ 'active' if request.endpoint == 'worker_report' else '' }}" href="{{ url_for('worker_report') }}"><span>▤</span>הדוח האישי שלי</a>
+          {% endif %}
+          <a class="nav-item {{ 'active' if request.endpoint == 'ai_helper' else '' }}" href="{{ url_for('ai_helper') }}"><span>✦</span>עוזר AI</a>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="profile-mini">
+            <span class="avatar">{{ 'מ' if g.user['role'] == 'manager' else 'ע' }}</span>
+            <span><strong>{{ g.user['username'] }}</strong><small>{{ 'הרשאת מנהל' if g.user['role'] == 'manager' else 'הרשאת עובד' }}</small></span>
+          </div>
+          <form method="post" action="{{ url_for('logout') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="ghost-button" type="submit">התנתקות</button>
+          </form>
+        </div>
+      </aside>
+      <div class="workspace">
+        <header class="topbar">
+          <div><p class="eyebrow">מערכת ניהול מאובטחת</p><h1>{% block page_title %}סקירה כללית{% endblock %}</h1></div>
+          <div class="role-badge"><span class="status-dot"></span>{{ 'מנהל' if g.user['role'] == 'manager' else 'עובד' }}</div>
+        </header>
+        <main>
+          {% for message in get_flashed_messages() %}<div class="alert success" role="status">{{ message }}</div>{% endfor %}
+          {% block content %}{% endblock %}
+        </main>
+      </div>
+    </div>
+  {% else %}
+    <main class="login-shell">{% block public_content %}{% endblock %}</main>
+  {% endif %}
 </body>
 </html>
+

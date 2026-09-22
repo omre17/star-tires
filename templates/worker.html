@@ -1,25 +1,29 @@
 {% extends "base.html" %}
-{% block title %}עובד מערכת{% endblock %}
-
+{% block title %}סקירה אישית | צמיגי הכוכב{% endblock %}
+{% block page_title %}סקירה אישית{% endblock %}
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='worker.css') }}">
-
-<h1 class="text-center my-4">שלום עובד {{ session['username'] }}!</h1>
-
-<div class="d-flex flex-column align-items-center">
-    <!-- כפתור לצפייה בדוח האישי -->
-    <form action="/worker_report" method="get" class="mb-3 w-50">
-        <button type="submit" class="btn btn-primary w-100">צפייה בדוח האישי שלי</button>
-    </form>
-
-    <!-- כפתור לדף חדש של התחלה/סיום עבודה -->
-    <a href="/work-session" class="btn btn-secondary w-100 mb-3">ניהול שעות עבודה</a>
-        <a href="/ai-helper" class="btn btn-outline-secondary btn-lg w-100">עוזר AI</a>
-
+<div class="welcome-row">
+  <div><p class="eyebrow">החשבון שלי</p><h2>שלום, {{ g.user['username'] }}</h2><p>כאן אפשר לדווח נוכחות ולעקוב אחר השעות והשכר.</p></div>
+  <a class="primary-button" href="{{ url_for('work_session') }}">דיווח נוכחות <span>←</span></a>
 </div>
-
-{% if message %}
-  <p class="text-center mt-3 text-info">{{ message }}</p>
-{% endif %}
-
+<section class="kpi-grid worker-kpis">
+  <article class="kpi-card accent"><span>שעות השבוע</span><strong>{{ week_hours }}</strong><small>משמרות שהושלמו</small></article>
+  <article class="kpi-card"><span>סה״כ שעות</span><strong>{{ total_hours }}</strong><small>בכל התקופה</small></article>
+  <article class="kpi-card"><span>אומדן שכר</span><strong>₪{{ total_pay }}</strong><small>לפי ₪{{ g.user['hourly_rate'] }} לשעה</small></article>
+  <article class="kpi-card {{ 'working' if working else '' }}"><span>מצב נוכחי</span><strong class="status-text">{{ 'בעבודה' if working else 'לא בעבודה' }}</strong><small>{{ 'משמרת פתוחה' if working else 'אפשר להתחיל משמרת' }}</small></article>
+</section>
+<section class="dashboard-grid">
+  <article class="panel shift-panel">
+    <div><p class="eyebrow">נוכחות</p><h3>המשמרת שלך</h3><p>{{ 'יש משמרת פתוחה. יש לסיים אותה בסיום העבודה.' if working else 'אין כרגע משמרת פתוחה.' }}</p></div>
+    <form method="post" action="{{ url_for('work') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="clock-button {{ 'clocked-in' if working else '' }}" name="action" value="{{ 'end' if working else 'start' }}">{{ 'סיום עבודה' if working else 'התחלת עבודה' }}</button>
+    </form>
+  </article>
+  <article class="panel">
+    <div class="panel-heading"><div><p class="eyebrow">פעילות</p><h3>דיווחים אחרונים</h3></div><a class="text-link" href="{{ url_for('worker_report') }}">לדוח המלא</a></div>
+    {% if recent %}<ul class="event-list">{% for action, timestamp in recent %}<li><span class="event-dot {{ action }}"></span><div><strong>{{ 'כניסה' if action == 'start' else 'יציאה' }}</strong><small>{{ timestamp }}</small></div></li>{% endfor %}</ul>{% else %}<div class="empty-state"><p>עדיין אין דיווחי נוכחות.</p></div>{% endif %}
+  </article>
+</section>
 {% endblock %}
+

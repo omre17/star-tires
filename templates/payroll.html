@@ -1,28 +1,22 @@
 {% extends "base.html" %}
-{% block title %}שכר עובדים{% endblock %}
+{% block title %}דוח שכר | צמיגי הכוכב{% endblock %}
+{% block page_title %}דוח שכר{% endblock %}
 {% block content %}
-
-<h1 class="text-center my-4">דו"ח שכר</h1>
-
-<table class="table table-bordered table-hover text-center">
-    <thead class="table-dark">
-        <tr>
-            <th>שם משתמש</th>
-            <th>שעות</th>
-            <th>שכר לשעה</th>
-            <th>שכר כולל</th>
-        </tr>
-    </thead>
-    <tbody>
+<div class="section-intro"><div><p class="eyebrow">אומדן תפעולי</p><h2>שעות ושכר עובדים</h2><p>החישוב מבוסס על משמרות שהושלמו ועל התעריף הנוכחי.</p></div><span class="page-badge">{{ payroll|length }} עובדים</span></div>
+<article class="panel table-panel">
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>עובד</th><th>שעות שהושלמו</th><th>תעריף לשעה</th><th>אומדן שכר</th><th>סטטוס</th></tr></thead>
+      <tbody>
         {% for username, hours, rate, total_pay in payroll %}
-        <tr>
-            <td>{{ username }}</td>
-            <td>{{ hours }}</td>
-            <td>{{ rate }} ₪</td>
-            <td>{{ total_pay }} ₪</td>
-        </tr>
+          <tr><td><span class="employee-cell"><span class="avatar small">ע</span><strong>{{ username }}</strong></span></td><td>{{ hours }}</td><td>₪{{ rate }}</td><td><strong>₪{{ total_pay }}</strong></td><td><span class="pill success">מעודכן</span></td></tr>
+        {% else %}
+          <tr><td colspan="5" class="empty-cell">עדיין אין עובדים להצגה.</td></tr>
         {% endfor %}
-    </tbody>
-</table>
-
+      </tbody>
+    </table>
+  </div>
+</article>
+<p class="fine-print">זהו אומדן בסיסי ולא תלוש שכר. הוא אינו כולל שעות נוספות, מסים, הפרשות או זכויות סוציאליות.</p>
 {% endblock %}
+

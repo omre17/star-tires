@@ -1,42 +1,33 @@
 {% extends "base.html" %}
-
-{% block title %}ניהול מלאי{% endblock %}
-
+{% block title %}ניהול מלאי | צמיגי הכוכב{% endblock %}
+{% block page_title %}ניהול מלאי{% endblock %}
 {% block content %}
-<div class="container mt-5">
-    <h1 class="text-center mb-4">ניהול מלאי צמיגים</h1>
-
-    <h2 class="mb-3">הוספת צמיג חדש</h2>
-    <form method="POST" class="mb-4">
-        <div class="mb-3">
-            <input type="text" name="tire_type" class="form-control" placeholder="סוג צמיג">
-        </div>
-        <div class="mb-3">
-            <input type="number" name="quantity" class="form-control" placeholder="כמות">
-        </div>
-        <button type="submit" class="btn btn-success">הוסף</button>
+<div class="section-intro"><div><p class="eyebrow">מלאי צמיגים</p><h2>כל המידות במקום אחד</h2><p>קליטת סחורה וצפייה בכמויות המעודכנות ממסד הנתונים.</p></div><span class="page-badge">{{ inventory|length }} מידות</span></div>
+<section class="inventory-layout">
+  <article class="panel form-panel">
+    <p class="eyebrow">קליטת סחורה</p><h3>הוספת כמות למלאי</h3>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>מידת צמיג<input name="tire_type" placeholder="לדוגמה: 195/65R15" maxlength="100" required></label>
+      <label>כמות להוספה<input name="quantity" type="number" min="1" max="100000" step="1" value="4" required></label>
+      <button class="primary-button" type="submit">הוספה למלאי</button>
     </form>
-
-    {% if message %}
-    <div class="alert alert-info text-center">{{ message }}</div>
-    {% endif %}
-
-    <h2 class="mt-4">מלאי נוכחי</h2>
-    <table class="table table-bordered text-center">
-        <thead class="table-light">
-            <tr>
-                <th>סוג צמיג</th>
-                <th>כמות</th>
-            </tr>
-        </thead>
+  </article>
+  <article class="panel table-panel">
+    <div class="panel-heading padded"><div><p class="eyebrow">מצב נוכחי</p><h3>רשימת מלאי</h3></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>מידת צמיג</th><th>כמות</th><th>מצב</th></tr></thead>
         <tbody>
-            {% for item in inventory %}
-            <tr>
-                <td>{{ item[0] }}</td>
-                <td>{{ item[1] }}</td>
-            </tr>
-            {% endfor %}
+          {% for item in inventory %}
+            <tr><td><strong dir="ltr">{{ item['tire_type'] }}</strong></td><td>{{ item['quantity'] }}</td><td><span class="pill {{ 'warning' if item['quantity'] < 10 else 'success' }}">{{ 'מלאי נמוך' if item['quantity'] < 10 else 'תקין' }}</span></td></tr>
+          {% else %}
+            <tr><td colspan="3" class="empty-cell">עדיין אין פריטים במלאי.</td></tr>
+          {% endfor %}
         </tbody>
-    </table>
-</div>
+      </table>
+    </div>
+  </article>
+</section>
 {% endblock %}
+

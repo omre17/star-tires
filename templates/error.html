@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}הודעת מערכת | צמיגי הכוכב{% endblock %}
+{% block page_title %}הודעת מערכת{% endblock %}
+{% block content %}
+<section class="error-card panel"><span class="error-icon">!</span><h2>לא ניתן להשלים את הפעולה</h2><p>{{ message }}</p><a class="primary-button" href="{{ url_for('welcome') }}">חזרה למסך הראשי</a></section>
+{% endblock %}
+{% block public_content %}
+<section class="login-card error-public"><span class="error-icon">!</span><h1>לא ניתן להשלים את הפעולה</h1><p>{{ message }}</p><a class="primary-button" href="{{ url_for('login') }}">חזרה להתחברות</a></section>
+{% endblock %}
+

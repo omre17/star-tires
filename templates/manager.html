@@ -1,36 +1,37 @@
 {% extends "base.html" %}
-{% block title %}מסך ניהול{% endblock %}
+{% block title %}סקירה כללית | צמיגי הכוכב{% endblock %}
+{% block page_title %}סקירה כללית{% endblock %}
 {% block content %}
-
-<div class="container mt-5">
-  <div class="card shadow-sm">
-    <div class="card-body text-center">
-      <h2 class="mb-4">שלום {{ session['username'] }}!</h2>
-
-      <div class="d-grid gap-3 col-6 mx-auto">
-        
-
-        <div class="d-grid gap-3 col-6 mx-auto">
-    <form action="/inventory" method="get" class="mb-3">
-        <button type="submit" class="btn btn-primary btn-lg w-100">ניהול מלאי</button>
-    </form>
-
-    <a href="/payroll" class="btn btn-secondary btn-lg w-100">
-
-         דוח שכר
-    </a>
-    <a href="/ai-helper" class="btn btn-outline-secondary btn-lg w-100 mb-3">עוזר AI</a>
-
+<div class="welcome-row">
+  <div><p class="eyebrow">תמונת מצב עדכנית</p><h2>שלום, {{ g.user['username'] }}</h2><p>המלאי, העובדים ואומדן השכר מרוכזים במקום אחד.</p></div>
+  <a class="primary-button" href="{{ url_for('inventory') }}">עדכון מלאי <span>←</span></a>
 </div>
-
-
-
-
+<section class="kpi-grid">
+  <article class="kpi-card accent"><span>יחידות במלאי</span><strong>{{ stock['total'] }}</strong><small>בכל מידות הצמיגים</small></article>
+  <article class="kpi-card"><span>מידות פעילות</span><strong>{{ stock['sizes'] }}</strong><small>פריטי מלאי שונים</small></article>
+  <article class="kpi-card warning"><span>מלאי נמוך</span><strong>{{ stock['low'] }}</strong><small>פחות מ-10 יחידות</small></article>
+  <article class="kpi-card"><span>עובדים פעילים</span><strong>{{ worker_count }}</strong><small>{{ total_hours }} שעות שהושלמו</small></article>
+</section>
+<section class="dashboard-grid">
+  <article class="panel">
+    <div class="panel-heading"><div><p class="eyebrow">מלאי</p><h3>מידות מובילות</h3></div><a class="text-link" href="{{ url_for('inventory') }}">לכל המלאי</a></div>
+    {% if top_stock %}
+      {% set max_quantity = top_stock[0]['quantity'] or 1 %}
+      <div class="stock-bars">
+        {% for item in top_stock %}
+          <div class="stock-row"><strong dir="ltr">{{ item['tire_type'] }}</strong><div class="bar-track"><div class="bar-fill {{ 'low' if item['quantity'] < 10 else '' }}" style="width: {{ ([item['quantity'] / max_quantity * 100, 8] | max) | round }}%"></div></div><span>{{ item['quantity'] }}</span></div>
+        {% endfor %}
       </div>
-    </div>
-  </div>
-</div>
-
+    {% else %}
+      <div class="empty-state"><strong>עדיין אין פריטי מלאי</strong><p>הוסיפו את מידת הצמיג הראשונה כדי להתחיל.</p></div>
+    {% endif %}
+  </article>
+  <article class="panel quick-actions">
+    <div class="panel-heading"><div><p class="eyebrow">גישה מהירה</p><h3>פעולות מנהל</h3></div></div>
+    <a href="{{ url_for('inventory') }}"><span>▦</span><div><strong>ניהול מלאי</strong><small>הוספה וצפייה בכמויות</small></div><b>←</b></a>
+    <a href="{{ url_for('payroll_view') }}"><span>▤</span><div><strong>דוח שכר</strong><small>שעות ואומדן תשלום</small></div><b>←</b></a>
+    <a href="{{ url_for('ai_helper') }}"><span>✦</span><div><strong>עוזר AI</strong><small>שאילתות על נתוני המערכת</small></div><b>←</b></a>
+  </article>
+</section>
 {% endblock %}
 
-          

@@ -1,5 +1,4 @@
-Flask
-Jinja2
-Werkzeug
-itsdangerous
-click
+Flask>=3.1,<4
+Flask-WTF>=1.2,<2
+requests>=2.32,<3
+gunicorn>=23,<27; sys_platform != 'win32'

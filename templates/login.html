@@ -1,26 +1,33 @@
 {% extends "base.html" %}
-
-{% block title %}התחברות{% endblock %}
-
-{% block content %}
-<div class="container mt-5" dir="rtl">
-  <h2 class="mb-4 text-center">התחברות</h2>
-  <form method="POST" class="border p-4 rounded shadow-sm bg-light">
-    <div class="mb-3">
-      <label class="form-label">שם משתמש</label>
-      <input name="username" placeholder="שם משתמש" class="form-control">
-    </div>
-    <div class="mb-3">
-      <label class="form-label">סיסמה</label>
-      <input name="password" type="password" placeholder="סיסמה" class="form-control">
-    </div>
-    <button type="submit" class="btn btn-primary w-100">כניסה</button>
-    
-    {% if error %}
-      <div class="alert alert-danger mt-3" role="alert">
-        {{ error }}
-      </div>
-    {% endif %}
+{% block title %}התחברות | צמיגי הכוכב{% endblock %}
+{% block public_content %}
+<section class="login-card">
+  <div class="login-brand">
+    <span class="brand-mark"><span></span></span>
+    <div><strong>צמיגי הכוכב</strong><small>מערכת ניהול עובדים ומלאי</small></div>
+  </div>
+  <p class="eyebrow">כניסה מאובטחת</p>
+  <h1>ברוכים הבאים</h1>
+  <p class="login-copy">הזינו את פרטי החשבון כדי להמשיך למערכת.</p>
+  <form method="post" class="login-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>שם משתמש<input name="username" autocomplete="username" maxlength="80" required autofocus></label>
+    <label>סיסמה<input name="password" type="password" autocomplete="current-password" required></label>
+    {% if error %}<div class="alert danger" role="alert">{{ error }}</div>{% endif %}
+    <button class="primary-button" type="submit">כניסה למערכת</button>
   </form>
-</div>
+  {% if config.DEMO_MODE %}
+    <div class="demo-logins">
+      <span>התנסות ללא סיסמה</span>
+      {% for role, label in [('manager','כניסה כמנהל דמו'),('worker','כניסה כעובד דמו')] %}
+        <form method="post" action="{{ url_for('demo_login', role=role) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="secondary-button" type="submit">{{ label }}</button>
+        </form>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+<p class="login-footnote">Flask · SQLite · Role-based access</p>
 {% endblock %}
+

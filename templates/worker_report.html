@@ -1,41 +1,24 @@
 {% extends "base.html" %}
-{% block title %}הדוח האישי שלי{% endblock %}
+{% block title %}הדוח האישי | צמיגי הכוכב{% endblock %}
+{% block page_title %}הדוח האישי שלי{% endblock %}
 {% block content %}
-
-<div class="container mt-5">
-  <div class="card shadow-sm">
-    <div class="card-body">
-
-      <h2 class="text-center mb-4">הדוח האישי שלי</h2>
-
-      <ul class="list-group mb-4">
-        <li class="list-group-item">סה"כ שעות עבודה: {{ total_hours }}</li>
-        <li class="list-group-item">שכר לשעה: {{ hourly_rate }} ₪</li>
-        <li class="list-group-item">שכר כולל: {{ total_pay }} ₪</li>
-      </ul>
-
-      <h4 class="mb-3">רשימת כניסות ויציאות</h4>
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center">
-          <thead class="table-light">
-            <tr>
-              <th>פעולה</th>
-              <th>תאריך ושעה</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for action, timestamp in sessions %}
-            <tr>
-              <td>{{ action }}</td>
-              <td>{{ timestamp }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-
-    </div>
+<div class="section-intro"><div><p class="eyebrow">שעות ושכר</p><h2>סיכום אישי</h2><p>רק נתוני החשבון המחובר מוצגים בעמוד זה.</p></div></div>
+<section class="kpi-grid report-kpis">
+  <article class="kpi-card accent"><span>סה״כ שעות</span><strong>{{ total_hours }}</strong><small>משמרות שהושלמו</small></article>
+  <article class="kpi-card"><span>תעריף לשעה</span><strong>₪{{ hourly_rate }}</strong><small>תעריף נוכחי</small></article>
+  <article class="kpi-card"><span>אומדן שכר</span><strong>₪{{ total_pay }}</strong><small>לפני מסים וזכויות</small></article>
+</section>
+<article class="panel table-panel">
+  <div class="panel-heading padded"><div><p class="eyebrow">היסטוריה</p><h3>רשימת כניסות ויציאות</h3></div></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>פעולה</th><th>תאריך ושעה</th></tr></thead>
+      <tbody>
+        {% for action, timestamp in sessions %}<tr><td><span class="pill {{ 'success' if action == 'start' else 'neutral' }}">{{ 'כניסה' if action == 'start' else 'יציאה' }}</span></td><td dir="ltr">{{ timestamp }}</td></tr>{% else %}<tr><td colspan="2" class="empty-cell">עדיין אין דיווחי נוכחות.</td></tr>{% endfor %}
+      </tbody>
+    </table>
   </div>
-</div>
-
+</article>
+<p class="fine-print">משמרות פתוחות אינן נכללות בחישוב. הזמנים נשמרים ב-UTC.</p>
 {% endblock %}
+

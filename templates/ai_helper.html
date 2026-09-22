@@ -1,24 +1,22 @@
 {% extends "base.html" %}
-{% block title %}עוזר AI{% endblock %}
-
+{% block title %}עוזר AI | צמיגי הכוכב{% endblock %}
+{% block page_title %}עוזר AI{% endblock %}
 {% block content %}
-<div class="container mt-5" dir="rtl">
-  <h2 class="mb-4 text-center">שאל את עוזר ה-AI</h2>
-
-  <form method="POST" class="border p-3 rounded bg-light">
-    <div class="mb-3">
-      <label class="form-label">שאלה</label>
-      <input name="question" class="form-control"
-             placeholder="לדוגמה: כמה שעות עבדתי השבוע? או כמה צמיגים יש מ-205/55R16?">
-    </div>
-    <button type="submit" class="btn btn-primary w-100">שלח</button>
-  </form>
-
-  {% if error %}
-    <div class="alert alert-danger mt-3">{{ error }}</div>
+<div class="section-intro"><div><p class="eyebrow">עוזר תפעולי</p><h2>שאלות על נתוני המערכת</h2><p>העוזר קורא רק את הנתונים המורשים לתפקיד המחובר ואינו משנה נתונים.</p></div></div>
+<article class="assistant-shell panel">
+  <div class="assistant-intro"><span class="ai-mark">✦</span><div><strong>עוזר הכוכב</strong><p>{{ 'אפשר לשאול על שעות העבודה ועל מצב המלאי.' if g.user['role'] == 'manager' else 'אפשר לשאול על שעות העבודה האישיות שלך.' }}</p></div></div>
+  {% if disabled %}
+    <div class="alert info">שירות ה-AI כבוי כרגע. אפשר להפעיל אותו באמצעות Ollama והמשתנים המפורטים ב-README.</div>
+  {% else %}
+    <form method="post" class="assistant-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label>השאלה שלך<textarea name="question" rows="4" maxlength="1000" required placeholder="לדוגמה: כמה שעות עבדתי השבוע?"></textarea></label>
+      <button class="primary-button" type="submit">שליחת שאלה</button>
+    </form>
   {% endif %}
-  {% if answer %}
-    <div class="alert alert-info mt-3" style="white-space: pre-wrap;">{{ answer }}</div>
-  {% endif %}
-</div>
+  {% if error %}<div class="alert danger">{{ error }}</div>{% endif %}
+  {% if answer %}<div class="answer-box"><span>תשובת העוזר</span><p>{{ answer }}</p></div>{% endif %}
+</article>
+<p class="fine-print">תשובות AI עשויות לטעות. דוחות המערכת הם המקור הקובע.</p>
 {% endblock %}
+
